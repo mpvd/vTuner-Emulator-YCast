@@ -30,17 +30,17 @@ I tried his docker but realised the shown dockerfile wasn't up to date and I cou
 
 To start you docker use this command:
 ```
-	sudo docker run -d \
-        --name vtuner-ycast \
-        -v /home/vtuner/:/opt/ycast/stations/ \
-        -p 80:80 \
-        --restart unless-stopped \
-	vtuner-emulator-ycast:latest
+sudo docker run -d \
+	--name vtuner-ycast \
+	-v /home/vtuner/:/opt/ycast/stations/ \
+	-p 80:80 \
+	--restart unless-stopped \
+vtuner-emulator-ycast:latest
 ```
 or in one line (for copy paste ;-) )
 
 ```
-	sudo docker run -d --name vtuner-ycast -v /home/vtuner/:/opt/ycast/stations/ -p 80:80 --restart unless-stopped vtuner-emulator-ycast:latest 
+sudo docker run -d --name vtuner-ycast -v /home/vtuner/:/opt/ycast/stations/ -p 80:80 --restart unless-stopped vtuner-emulator-ycast:latest 
 ```
  Almos every device uses port 80. There you have to forward this to your container. (If it is alread in use, see the workaround below.)
  You can edit the stations.yml from your Raspbian without entering the docker. It will be mounted to folder /home/vtuner 
@@ -83,115 +83,115 @@ You need the following files in one folder:
 (Pay attention to the port.)
 
 ```
-		#!/bin/bash
-		#prepare
-		mkdir -p /home/vtuner/
-		
-		# Build docker, this will take a while
-		# if warnings due to nework appear add flag --network host
-		sudo docker build -f dockerfile -t vtuner-emulator-ycast . #--network host
-		
-		# run it
-		sudo docker run -d \
-				--name vtuner-ycast \
-				-v /home/vtuner/:/opt/ycast/stations/ \
-				-p 80:80 \
-				--restart unless-stopped \
-		 vtuner-emulator-ycast
-		sudo chmod -R 777 /home/vtuner/
+#!/bin/bash
+#prepare
+mkdir -p /home/vtuner/
 
-		# If you have your own list put in in the same
-		# directory like this batch and name it stations.yml.
-		# The dockerfile works inside the docker and copies the
-		# default stations.yml.example file from the ycast tar in
-		# the stations directory of the docker.
-		# This following copy command overrides the default yml.
-		# If it's missing it will be ignored. 
-		cp stations.yml /home/vtuner/stations.yml 2>/dev/null || :
+# Build docker, this will take a while
+# if warnings due to nework appear add flag --network host
+sudo docker build -f dockerfile -t vtuner-emulator-ycast . #--network host
+
+# run it
+sudo docker run -d \
+		--name vtuner-ycast \
+		-v /home/vtuner/:/opt/ycast/stations/ \
+		-p 80:80 \
+		--restart unless-stopped \
+ vtuner-emulator-ycast
+sudo chmod -R 777 /home/vtuner/
+
+# If you have your own list put in in the same
+# directory like this batch and name it stations.yml.
+# The dockerfile works inside the docker and copies the
+# default stations.yml.example file from the ycast tar in
+# the stations directory of the docker.
+# This following copy command overrides the default yml.
+# If it's missing it will be ignored. 
+cp stations.yml /home/vtuner/stations.yml 2>/dev/null || :
 ```
 
 ### dockerfile
 
 ```
-		# Docker Buildfile for Raspberry Pi (Raspian) 
-		# Image size: about 41.3 MB                       
-		# Code based on: netraans                          
-		# Edited by: mpvd                                      
-		
-		FROM alpine:latest
+# Docker Buildfile for Raspberry Pi (Raspian) 
+# Image size: about 41.3 MB                       
+# Code based on: netraans                          
+# Edited by: mpvd                                      
 
-		# Variables:
-		# YC_VERSION version of ycast software
-		# YC_STATIONS path an name of the indiviudual stations.yml e.g. /ycast/stations/stations.yml ; before changing check vtuner-build.sh
-		# YC_DEBUG turn ON or OFF debug output of YCast server else only start /bin/sh
-		# YC_PORT port ycast server listens to, e.g. 80
-		ENV YC_VERSION 1.0.0
-		ENV YC_STATIONS /opt/ycast/stations/stations.yml
-		ENV YC_DEBUG OFF
-		ENV YC_PORT 80
+FROM alpine:latest
 
-		# Upgrade alpine Linux, install python3 and dependencies for pillow - alpine does not use glibc
-		# Optional nano editor installed (If you don't need it, delete this line.)
-		# pip install needed modules for ycast
-		# make /opt/ycast Directory, delete unneeded packages
-		# download ycast tar.gz and extract it in ycast Directory
-		# delete unneeded stuff
-		# copy stations.yml with examples
-		RUN apk --no-cache update \
-		&& apk --no-cache upgrade \
-		&& apk add --no-cache nano \
-		&& apk add --no-cache py-pip \
-		&& apk add --no-cache zlib-dev \
-		&& apk add --no-cache libjpeg-turbo-dev \
-		&& apk add --no-cache build-base \
-		&& apk add --no-cache python3-dev \
-		&& pip3 install --no-cache-dir requests \
-		&& pip3 install --no-cache-dir flask \
-		&& pip3 install --no-cache-dir PyYAML \
-		&& pip3 install --no-cache-dir pillow \
-		&& mkdir -p /opt/ycast/stations \
-		&& apk del --no-cache python3-dev \
-		&& apk del --no-cache build-base \
-		&& apk del --no-cache zlib-dev \
-		&& apk add --no-cache curl \
-		&& curl -L https://github.com/milaq/YCast/archive/$YC_VERSION.tar.gz | tar xvzC /opt/ycast \
-		&& apk del --no-cache curl \
-		&& pip3 uninstall --no-cache-dir -y setuptools \
-		&& find /usr/lib -name \*.pyc -exec rm -f {} \; \
-		&& cp /opt/ycast/YCast-$YC_VERSION/examples/stations.yml.example $YC_STATIONS \
-		&& chmod -R 777 /opt/ycast/stations
+# Variables:
+# YC_VERSION version of ycast software
+# YC_STATIONS path an name of the indiviudual stations.yml e.g. /ycast/stations/stations.yml ; before changing check vtuner-build.sh
+# YC_DEBUG turn ON or OFF debug output of YCast server else only start /bin/sh
+# YC_PORT port ycast server listens to, e.g. 80
+ENV YC_VERSION 1.0.0
+ENV YC_STATIONS /opt/ycast/stations/stations.yml
+ENV YC_DEBUG OFF
+ENV YC_PORT 80
 
-		# Set Workdirectory on ycast folder
-		WORKDIR /opt/ycast/YCast-$YC_VERSION
+# Upgrade alpine Linux, install python3 and dependencies for pillow - alpine does not use glibc
+# Optional nano editor installed (If you don't need it, delete this line.)
+# pip install needed modules for ycast
+# make /opt/ycast Directory, delete unneeded packages
+# download ycast tar.gz and extract it in ycast Directory
+# delete unneeded stuff
+# copy stations.yml with examples
+RUN apk --no-cache update \
+&& apk --no-cache upgrade \
+&& apk add --no-cache nano \
+&& apk add --no-cache py-pip \
+&& apk add --no-cache zlib-dev \
+&& apk add --no-cache libjpeg-turbo-dev \
+&& apk add --no-cache build-base \
+&& apk add --no-cache python3-dev \
+&& pip3 install --no-cache-dir requests \
+&& pip3 install --no-cache-dir flask \
+&& pip3 install --no-cache-dir PyYAML \
+&& pip3 install --no-cache-dir pillow \
+&& mkdir -p /opt/ycast/stations \
+&& apk del --no-cache python3-dev \
+&& apk del --no-cache build-base \
+&& apk del --no-cache zlib-dev \
+&& apk add --no-cache curl \
+&& curl -L https://github.com/milaq/YCast/archive/$YC_VERSION.tar.gz | tar xvzC /opt/ycast \
+&& apk del --no-cache curl \
+&& pip3 uninstall --no-cache-dir -y setuptools \
+&& find /usr/lib -name \*.pyc -exec rm -f {} \; \
+&& cp /opt/ycast/YCast-$YC_VERSION/examples/stations.yml.example $YC_STATIONS \
+&& chmod -R 777 /opt/ycast/stations
 
-		# Copy bootstrap.sh to /opt 
-		# important for container start, see below
-		COPY bootstrap.sh /opt
+# Set Workdirectory on ycast folder
+WORKDIR /opt/ycast/YCast-$YC_VERSION
 
-		# Port on with Docker Container is listening
-		EXPOSE $YC_PORT/tcp
+# Copy bootstrap.sh to /opt 
+# important for container start, see below
+COPY bootstrap.sh /opt
 
-		# Start bootstrap on container start
-		RUN ["chmod", "+x", "/opt/bootstrap.sh"]
-		ENTRYPOINT ["/opt/bootstrap.sh"]
+# Port on with Docker Container is listening
+EXPOSE $YC_PORT/tcp
+
+# Start bootstrap on container start
+RUN ["chmod", "+x", "/opt/bootstrap.sh"]
+ENTRYPOINT ["/opt/bootstrap.sh"]
 ```
 
 ### bootstrap.sh
 
 ```
-		#!/bin/sh
-		# by netraans
-		# Variables defined in dockerfile
-		if [ "$YC_DEBUG" = "OFF" ]; then
-				/usr/bin/python3 -m ycast -c $YC_STATIONS -p $YC_PORT
+#!/bin/sh
+# by netraans
+# Variables defined in dockerfile
+if [ "$YC_DEBUG" = "OFF" ]; then
+		/usr/bin/python3 -m ycast -c $YC_STATIONS -p $YC_PORT
 
-		elif [ "$YC_DEBUG" = "ON" ]; then
-				/usr/bin/python3 -m ycast -c $YC_STATIONS -p $YC_PORT -d
+elif [ "$YC_DEBUG" = "ON" ]; then
+		/usr/bin/python3 -m ycast -c $YC_STATIONS -p $YC_PORT -d
 
-		else
-				/bin/sh
+else
+		/bin/sh
 
-		fi
+fi
 ```
 
 ### stations.yml
