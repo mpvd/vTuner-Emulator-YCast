@@ -64,7 +64,7 @@ You need to create a manual entry in your DNS server (read 'Router' for most hom
   
   Then you have to change the external port of the docker (the internal stays at 80). For example to 8080 or whatever you like: 
 ```
-		sudo docker run -d --name vtuner-ycast -v /home/vtuner/:/opt/ycast/stations/ -p 8080:80 --restart unless-stopped vtuner-emulator-ycast:latest
+sudo docker run -d --name vtuner-ycast -v /home/vtuner/:/opt/ycast/stations/ -p 8080:80 --restart unless-stopped vtuner-emulator-ycast:latest
 ```
 Have fun. :-)
 =
