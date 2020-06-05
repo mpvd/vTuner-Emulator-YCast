@@ -37,12 +37,12 @@ sudo docker run -d \
 	-v /home/vtuner/:/opt/ycast/stations/ \
 	-p 80:80 \
 	--restart unless-stopped \
-vtuner-emulator-ycast:latest
+mpvd/vtuner-emulator-ycast:latest
 ```
 or in one line (for copy paste ;-) )
 
 ```
-sudo docker run -d --name vtuner-ycast -v /home/vtuner/:/opt/ycast/stations/ -p 80:80 --restart unless-stopped vtuner-emulator-ycast:latest 
+sudo docker run -d --name vtuner-ycast -v /home/vtuner/:/opt/ycast/stations/ -p 80:80 --restart unless-stopped mpvd/vtuner-emulator-ycast:latest 
 ```
  Almos every device uses port 80. There you have to forward this to your container. (If it is alread in use, see the workaround below.)
  You can edit the stations.yml from your Raspbian without entering the docker. It will be mounted to folder /home/vtuner 
@@ -66,7 +66,7 @@ You need to create a manual entry in your DNS server (read 'Router' for most hom
   
   Then you have to change the external port of the docker (the internal stays at 80). For example to 8080 or whatever you like: 
 ```
-sudo docker run -d --name vtuner-ycast -v /home/vtuner/:/opt/ycast/stations/ -p 8080:80 --restart unless-stopped vtuner-emulator-ycast:latest
+sudo docker run -d --name vtuner-ycast -v /home/vtuner/:/opt/ycast/stations/ -p 8080:80 --restart unless-stopped mpvd/vtuner-emulator-ycast:latest
 ```
 Have fun. :-)
 =
@@ -90,7 +90,7 @@ You need the following files in one folder:
 mkdir -p /home/vtuner/
 
 # Build docker, this will take a while
-sudo docker build -f dockerfile -t vtuner-emulator-ycast .
+sudo docker build -f dockerfile -t mpvd/vtuner-emulator-ycast .
 
 # run it
 sudo docker run -d \
@@ -98,7 +98,7 @@ sudo docker run -d \
 		-v /home/vtuner/:/opt/ycast/stations/ \
 		-p 80:80 \
 		--restart unless-stopped \
- vtuner-emulator-ycast
+mpvd/vtuner-emulator-ycast
 sudo chmod -R 777 /home/vtuner/
 
 # If you have your own list put in in the same
@@ -211,4 +211,4 @@ Have a look at the provided example to better understand how the file should loo
   * If you change the stations.yml you have to reboot the server. I think this is caused by Flask. As far as I know it should run in debug-mode, to make this possible. But didn't had time to go deeper. 
   * As far as I understand YCast 1.0.0 is using the old API of Radio Browser. I don't know why, but maybe this will be an issue in Future. 
   
-  Feel free to contact me, if you have any optimization: [Report an Issue](https://github.com/mpvd/vTuner-Emulator-YCast/issues)
+Feel free to contact me, if you have any optimization: [Report an Issue](https://github.com/mpvd/vTuner-Emulator-YCast/issues)
