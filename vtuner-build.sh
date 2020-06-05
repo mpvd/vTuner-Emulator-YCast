@@ -24,5 +24,3 @@ sudo chmod -R 777 /home/vtuner/
 # This following copy command overrides the default yml.
 # If it's missing it will be ignored. 
 cp stations.yml /home/vtuner/stations.yml 2>/dev/null || :
-
-
