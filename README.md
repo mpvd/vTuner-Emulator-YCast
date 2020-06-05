@@ -1,6 +1,8 @@
 # vTuner-Emulator-YCast
 
 vTuner-Emulator-YCast is a docker container based on YCast for RaspberryPi (Raspbian) to replace vTuner.
+Find this project on [Github](https://github.com/mpvd/vTuner-Emulator-YCast/) and on [Docker-Hub](https://hub.docker.com/r/mpvd/vtuner-emulator-ycast).
+Feel free to contact me, if you have any optimization: [Report an Issue](https://github.com/mpvd/vTuner-Emulator-YCast/issues)
 
 ## YCast
 YCast is a self hosted replacement for the vTuner internet radio service which many AVRs use and made by Micha LaQua (Copyright (C) 2019 Micha LaQua).
@@ -201,4 +203,12 @@ Have a look at the provided example to better understand how the file should loo
   * YCast has a [GPLv3]-License and is free. Check [PyPI](https://pypi.org/project/ycast/) or [GitHub](https://github.com/milaq/YCast/releases)
   * dockerfile and bootstrap.sh based on [netraams/ycast-docker](https://hub.docker.com/r/netraams/ycast-docker)
   * more info about [Flask](https://flask.palletsprojects.com/en/1.1.x/) and the [License](https://github.com/pallets/flask/blob/master/LICENSE.rst)
-  * Also this docker is distributed in the hope that it will be useful, but without any warranty. You use it at our own risk. 
+  * Also this docker/code is distributed in the hope that it will be useful, but without any warranty. You use it at our own risk. 
+  
+ ## ToBe done in Future
+  * If you open the YCast server in your browser, it shows strange codes. It would be cool, if it would show the stations.yml
+  * Editable stations.yml in browser: Right know you have to edit it from your Raspberry
+  * If you change the stations.yml you have to reboot the server. I think this is caused by Flask. As far as I know it should run in debug-mode, to make this possible. But didn't had time to go deeper. 
+  * As far as I understand YCast 1.0.0 is using the old API of Radio Browser. I don't know why, but maybe this will be an issue in Future. 
+  
+  Feel free to contact me, if you have any optimization: [Report an Issue](https://github.com/mpvd/vTuner-Emulator-YCast/issues)
