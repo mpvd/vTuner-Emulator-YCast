@@ -25,12 +25,12 @@ This Docker container is based in Alpine:latest and adds Python3 to it, which ba
 
 The following dockerfile (and bootstrap.sh) is inspired by the great work of **netraams**. Check out [netraams/ycast-docker](https://hub.docker.com/r/netraams/ycast-docker)
 
-I tried his docker but realised the shown dockerfile wasn't up to date and I couldn't start his docker on raspbian. So I decided to use his work as basis and did some little modifications. Also due to security reasons I wanted to build the docker by myself and add nano editor just for fun. (Delete the line in dockerfile if you don't like it.)
+I tried his docker but realised the shown dockerfile wasn't up to date and I couldn't start his docker on raspbian. So I decided to use his work as basis and did some modifications. Also due to security reasons I wanted to build the docker by myself and add nano editor just for fun. (Delete the line in dockerfile if you don't like it.)
 
 
 ## Usage
 
-To start you docker use this command:
+To start your docker use this command:
 ```
 sudo docker run -d \
 	--name vtuner-ycast \
