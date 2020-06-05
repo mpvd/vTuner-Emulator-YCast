@@ -88,8 +88,7 @@ You need the following files in one folder:
 mkdir -p /home/vtuner/
 
 # Build docker, this will take a while
-# if warnings due to nework appear add flag --network host
-sudo docker build -f dockerfile -t vtuner-emulator-ycast . #--network host
+sudo docker build -f dockerfile -t vtuner-emulator-ycast .
 
 # run it
 sudo docker run -d \

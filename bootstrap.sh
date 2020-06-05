@@ -1,4 +1,4 @@
-#!/bin/sh !/bin/sh
+#!/bin/sh
 # by netraans
 # Variables defined in dockerfile
 
