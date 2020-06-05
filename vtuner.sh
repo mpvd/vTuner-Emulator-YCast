@@ -9,4 +9,4 @@ sudo docker run -d \
 	-v /home/vtuner/:/opt/ycast/stations/ \
 	-p 8080:80 \
 	--restart unless-stopped \
- vtuner-emulator-ycast
+mpvd/vtuner-emulator-ycast
