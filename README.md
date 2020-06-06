@@ -64,7 +64,7 @@ You need to create a manual entry in your DNS server (read 'Router' for most hom
   * IP of you ycast-Docker is: 172.17.0.2 (usually bridged network has a 255.255.0.0 or /16 subnet)
   * Your route in your router should be then 172.17.0.0/16 to 192.168.178.100
   
-  Then you have to change the external port of the docker (the internal stays at 80). For example to 8080 or whatever you like: 
+Then you have to change the external port of the docker (the internal stays at 80). For example to 8080 or whatever you like: 
 ```
 sudo docker run -d --name vtuner-ycast -v /home/vtuner/:/opt/ycast/stations/ -p 8080:80 --restart unless-stopped mpvd/vtuner-emulator-ycast:latest
 ```
@@ -79,27 +79,59 @@ You need the following files in one folder:
  * `vtuner-build.sh`
  * `dockerfile`
  * `bootstrap.sh`
+ * `run.sh`
  * `samples.yml (optional, if you already have your favorites, see vtuner-build.sh)`
 
-#### vtuner-build.sh 
-(Pay attention to the port.)
-
-```
+ #### run.sh 
+ (Pay attention to the port.)
+ ```
 #!/bin/bash
 #prepare
-mkdir -p /home/vtuner/
-
-# Build docker, this will take a while
-sudo docker build -f dockerfile -t mpvd/vtuner-emulator-ycast .
+sudo docker stop vtuner-ycast
+sudo docker rm vtuner-ycast
 
 # run it
 sudo docker run -d \
-		--name vtuner-ycast \
-		-v /home/vtuner/:/opt/ycast/stations/ \
-		-p 80:80 \
-		--restart unless-stopped \
+	--name vtuner-ycast \
+	-v /home/vtuner/:/srv/ycast/ycast/stations/ \
+	-p 8080:80 \
+	--net multimedia \
+	--ip 172.18.0.100 \
+	--restart unless-stopped \
 mpvd/vtuner-emulator-ycast
-sudo chmod -R 777 /home/vtuner/
+
+sudo chmod -R 744 /home/vtuner/
+```
+ 
+#### build.sh 
+(Pay attention to the network.)
+
+```
+#!/bin/bash
+# Build docker, this will take a while
+VERSION=1.0
+
+#Prepare
+if [ -f "VERSION" ]; then rm VERSION 
+fi
+echo $VERSION > VERSION
+
+# build docker
+echo Building version: $VERSION
+sudo docker build -f dockerfile -t mpvd/vtuner-emulator-ycast . 
+
+# tag docker
+echo Tagging the docker
+sudo docker tag mpvd/vtuner-emulator-ycast:latest mpvd/vtuner-emulator-ycast:$VERSION
+
+# create own network for this container which
+# you can address in DNS and router later
+sudo docker network create --subnet=172.18.0.0/24 multimedia 2>/dev/null
+
+# run the docker
+echo Running the Docker
+mkdir -p /home/vtuner/
+sh run.sh
 
 # If you have your own list put in in the same
 # directory like this batch and name it stations.yml.
@@ -108,33 +140,44 @@ sudo chmod -R 777 /home/vtuner/
 # the stations directory of the docker.
 # This following copy command overrides the default yml.
 # If it's missing it will be ignored. 
-cp stations.yml /home/vtuner/stations.yml 2>/dev/null || :
+
+if [ -f "stations.yml" ]; then
+    echo "stations.yml found"
+	cp stations.yml /home/vtuner/stations.yml 2>/dev/null || :
+	echo "stations.yml copied"
+else 
+    echo "No stations.yml to copy :-("
+	echo "stations.yml from example will be used."
+fi
 ```
 
 ### dockerfile
 
 ```
 # Docker Buildfile for Raspberry Pi (Raspian) 
-# Image size: about 41.3 MB                       
+# Image size: about 42.3 MB                       
 # Code based on: netraans                          
-# Edited by: mpvd                                      
+# Edited by: mpvd 
 
 FROM alpine:latest
 
-# Variables:
+# Variables: (passed from build script)
 # YC_VERSION version of ycast software
-# YC_STATIONS path an name of the indiviudual stations.yml e.g. /ycast/stations/stations.yml ; before changing check vtuner-build.sh
+# YC_STATIONS* path an name of the indiviudual stations.yml e.g. /ycast/stations/stations.yml ; before changing check vtuner-build.sh
 # YC_DEBUG turn ON or OFF debug output of YCast server else only start /bin/sh
 # YC_PORT port ycast server listens to, e.g. 80
+# Folder structure /srv/ycast/ycast/stations
 ENV YC_VERSION 1.0.0
-ENV YC_STATIONS /opt/ycast/stations/stations.yml
+ENV YC_WORKDIR /srv/ycast
 ENV YC_DEBUG OFF
+ENV YC_STATIONSFOLDER ycast/stations
+ENV YC_STATIONSFILE stations.yml
 ENV YC_PORT 80
 
 # Upgrade alpine Linux, install python3 and dependencies for pillow - alpine does not use glibc
 # Optional nano editor installed (If you don't need it, delete this line.)
 # pip install needed modules for ycast
-# make /opt/ycast Directory, delete unneeded packages
+# make directories, delete unneeded packages
 # download ycast tar.gz and extract it in ycast Directory
 # delete unneeded stuff
 # copy stations.yml with examples
@@ -150,31 +193,40 @@ RUN apk --no-cache update \
 && pip3 install --no-cache-dir flask \
 && pip3 install --no-cache-dir PyYAML \
 && pip3 install --no-cache-dir pillow \
-&& mkdir -p /opt/ycast/stations \
+&& mkdir -p $YC_WORKDIR/$YC_STATIONSFOLDER \
+&& mkdir /temp \
 && apk del --no-cache python3-dev \
 && apk del --no-cache build-base \
 && apk del --no-cache zlib-dev \
 && apk add --no-cache curl \
-&& curl -L https://github.com/milaq/YCast/archive/$YC_VERSION.tar.gz | tar xvzC /opt/ycast \
-&& apk del --no-cache curl \
+&& curl -L https://github.com/milaq/YCast/archive/$YC_VERSION.tar.gz | tar xvzC /temp \
+&& cp -r /temp/YCast-$YC_VERSION/* $YC_WORKDIR/ \
+&& rm -r /temp \
 && pip3 uninstall --no-cache-dir -y setuptools \
 && find /usr/lib -name \*.pyc -exec rm -f {} \; \
-&& cp /opt/ycast/YCast-$YC_VERSION/examples/stations.yml.example $YC_STATIONS \
-&& chmod -R 777 /opt/ycast/stations
+&& cp $YC_WORKDIR/examples/stations.yml.example $YC_WORKDIR/$YC_STATIONSFOLDER/$YC_STATIONSFILE \
+&& chmod -R 777 $YC_WORKDIR/$YC_STATIONSFOLDER/
 
 # Set Workdirectory on ycast folder
-WORKDIR /opt/ycast/YCast-$YC_VERSION
+WORKDIR $YC_WORKDIR
 
-# Copy bootstrap.sh to /opt 
+# Copy bootstrap.sh to workdir
 # important for container start, see below
-COPY bootstrap.sh /opt
+COPY bootstrap.sh $YC_WORKDIR/bootstrap.sh
+COPY VERSION $YC_WORKDIR/VERSION
 
 # Port on with Docker Container is listening
 EXPOSE $YC_PORT/tcp
 
 # Start bootstrap on container start
-RUN ["chmod", "+x", "/opt/bootstrap.sh"]
-ENTRYPOINT ["/opt/bootstrap.sh"]
+#RUN ["chmod", "+x", "/srv/ycast/bootstrap.sh"]
+RUN ["sh", "-c", "chmod +x $YC_WORKDIR/bootstrap.sh"]
+#ENTRYPOINT ["/srv/ycast/bootstrap.sh"]
+ENTRYPOINT ["sh", "-c", "$YC_WORKDIR/bootstrap.sh"]
+
+#Healthcheck
+HEALTHCHECK CMD curl --fail http://localhost:$YC_PORT/ || exit 1
+
 ```
 
 ### bootstrap.sh
@@ -182,15 +234,16 @@ ENTRYPOINT ["/opt/bootstrap.sh"]
 ```
 #!/bin/sh
 # by netraans
-# Variables defined in dockerfile
+# Variables defined in dockerfile or in build script
+
 if [ "$YC_DEBUG" = "OFF" ]; then
-		/usr/bin/python3 -m ycast -c $YC_STATIONS -p $YC_PORT
+        /usr/bin/python3 -m ycast -c $YC_WORKDIR/$YC_STATIONSFOLDER/$YC_STATIONSFILE -p $YC_PORT
 
 elif [ "$YC_DEBUG" = "ON" ]; then
-		/usr/bin/python3 -m ycast -c $YC_STATIONS -p $YC_PORT -d
+        /usr/bin/python3 -m ycast -c $YC_WORKDIR/$YC_STATIONSFOLDER/$YC_STATIONSFILE -p $YC_PORT -d
 
 else
-		/bin/sh
+        /bin/sh
 
 fi
 ```
@@ -199,13 +252,13 @@ fi
 Have a look at the provided example to better understand how the file should look like. If you run the docker, there already will be an example copied in the right place, which you can use. 
 
  
- ## License and warranty
+## License and warranty
   * YCast has a [GPLv3]-License and is free. Check [PyPI](https://pypi.org/project/ycast/) or [GitHub](https://github.com/milaq/YCast/releases)
   * dockerfile and bootstrap.sh based on [netraams/ycast-docker](https://hub.docker.com/r/netraams/ycast-docker)
   * more info about [Flask](https://flask.palletsprojects.com/en/1.1.x/) and the [License](https://github.com/pallets/flask/blob/master/LICENSE.rst)
   * Also this docker/code is distributed in the hope that it will be useful, but without any warranty. You use it at our own risk. 
   
- ## ToBe done in Future
+## ToBe done in Future
   * If you open the YCast server in your browser, it shows strange codes. It would be cool, if it would show the stations.yml
   * Editable stations.yml in browser: Right know you have to edit it from your Raspberry
   * If you change the stations.yml you have to reboot the server. I think this is caused by Flask. As far as I know it should run in debug-mode, to make this possible. But didn't had time to go deeper. 
