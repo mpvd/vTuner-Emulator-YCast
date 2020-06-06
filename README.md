@@ -34,7 +34,7 @@ To start your docker use this command:
 ```
 sudo docker run -d \
 	--name vtuner-ycast \
-	-v /home/vtuner/:/opt/ycast/stations/ \
+	-v /home/vtuner/:/srv/ycast/ycast/stations/ \
 	-p 80:80 \
 	--restart unless-stopped \
 mpvd/vtuner-emulator-ycast:latest
@@ -42,7 +42,7 @@ mpvd/vtuner-emulator-ycast:latest
 or in one line (for copy paste ;-) )
 
 ```
-sudo docker run -d --name vtuner-ycast -v /home/vtuner/:/opt/ycast/stations/ -p 80:80 --restart unless-stopped mpvd/vtuner-emulator-ycast:latest 
+sudo docker run -d --name vtuner-ycast -v /home/vtuner/:/srv/ycast/ycast/stations/ -p 80:80 --restart unless-stopped mpvd/vtuner-emulator-ycast:latest 
 ```
  Almos every device uses port 80. There you have to forward this to your container. (If it is alread in use, see the workaround below.)
  You can edit the stations.yml from your Raspbian without entering the docker. It will be mounted to folder /home/vtuner 
@@ -76,10 +76,10 @@ If you want to do it yourself then read on.
 ## Recomendation: Build the docker on your own.
 
 You need the following files in one folder: 
- * `vtuner-build.sh`
+  * `run.sh`
+ * `build.sh`
  * `dockerfile`
  * `bootstrap.sh`
- * `run.sh`
  * `samples.yml (optional, if you already have your favorites, see vtuner-build.sh)`
 
  #### run.sh 
