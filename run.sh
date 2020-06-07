@@ -13,4 +13,4 @@ sudo docker run -d \
 	--restart unless-stopped \
 mpvd/vtuner-emulator-ycast
 
-sudo chmod -R 744 /home/vtuner/
+sudo chmod -R 777 /home/vtuner

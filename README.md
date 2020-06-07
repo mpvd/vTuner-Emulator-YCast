@@ -1,32 +1,9 @@
 # vTuner-Emulator-YCast
 
 vTuner-Emulator-YCast is a docker container based on YCast for RaspberryPi (Raspbian) to replace vTuner.
-Find this project on [Github](https://github.com/mpvd/vTuner-Emulator-YCast/) and on [Docker-Hub](https://hub.docker.com/r/mpvd/vtuner-emulator-ycast).
-Feel free to contact me, if you have any optimization: [Report an Issue](https://github.com/mpvd/vTuner-Emulator-YCast/issues)
-
-## YCast
-YCast is a self hosted replacement for the vTuner internet radio service which many AVRs use and made by Micha LaQua (Copyright (C) 2019 Micha LaQua).
-It emulates a vTuner backend to provide your AVR with the necessary information to play self defined categorized internet radio stations and listen to Radio stations listed in the [Community Radio Browser index](http://www.radio-browser.info).
-
-Get it via [PyPI](https://pypi.org/project/ycast/) or download from [GitHub](https://github.com/milaq/YCast/releases).
-
-
-**some comments from ycast:**
-
- * vTuner compatible AVRs don't do HTTPS. As such, YCast blindly rewrites every HTTPS station URL to HTTP. Most station providers which utilize HTTPS for their stations also provide an HTTP stream. Thus, most HTTPS stations should work.
- * The built-in bookmark function does not work at the moment. You need to manually add your favourite stations for now.
-
-## Docker
-This Docker container is based in Alpine:latest and adds Python3 to it, which bases on this Python packages:
- * `requests`
- * `flask`
- * `PyYAML`
- * `Pillow`
-
-The following dockerfile (and bootstrap.sh) is inspired by the great work of **netraams**. Check out [netraams/ycast-docker](https://hub.docker.com/r/netraams/ycast-docker)
-
-I tried his docker but realised the shown dockerfile wasn't up to date and I couldn't start his docker on raspbian. So I decided to use his work as basis and did some modifications. Also due to security reasons I wanted to build the docker by myself and add nano editor just for fun. (Delete the line in dockerfile if you don't like it.)
-
+* Find this project on [Github](https://github.com/mpvd/vTuner-Emulator-YCast/) 
+* and on [Docker-Hub](https://hub.docker.com/r/mpvd/vtuner-emulator-ycast)
+* Feel free to contact me, if you have any optimization: [Report an Issue](https://github.com/mpvd/vTuner-Emulator-YCast/issues)
 
 ## Usage
 
@@ -53,9 +30,15 @@ sudo docker run -d --name vtuner-ycast -v /home/vtuner/:/srv/ycast/ycast/station
 
 You need to create a manual entry in your DNS server (read 'Router' for most home users). `vtuner.com` (more specifically `*.vtuner.com`) should point to the machine YCast is running on. Alternatively, in case you only want to forward specific vendors, the following entries may be configured:
 
-  * Yamaha AVRs: `radioyamaha.vtuner.com` (and optionally `radioyamaha2.vtuner.com`)
-  * Onkyo AVRs: `onkyo.vtuner.com` (and optionally `onkyo2.vtuner.com`)
-  * Denon/Marantz AVRs: `denon.vtuner.com` (and optionally `denon2.vtuner.com`)
+  * Yamaha AVRs: 
+	- `radioyamaha.vtuner.com` 
+	- `radioyamaha2.vtuner.com`
+  * Onkyo AVRs: 
+	- `onkyo.vtuner.com` 
+	- `onkyo2.vtuner.com`
+  * Denon/Marantz AVRs: 
+	- `denon.vtuner.com`
+	- `denon2.vtuner.com`
   
  
  ### If port 80 is already blocked 
@@ -66,24 +49,45 @@ You need to create a manual entry in your DNS server (read 'Router' for most hom
   
 Then you have to change the external port of the docker (the internal stays at 80). For example to 8080 or whatever you like: 
 ```
-sudo docker run -d --name vtuner-ycast -v /home/vtuner/:/opt/ycast/stations/ -p 8080:80 --restart unless-stopped mpvd/vtuner-emulator-ycast:latest
+sudo docker run -d --name vtuner-ycast -v /home/vtuner/:/srv/ycast/ycast/stations/ -p 8080:80 --restart unless-stopped mpvd/vtuner-emulator-ycast:latest
 ```
 Have fun. :-)
 =
 <br><br> 
-If you want to do it yourself then read on.
+## Compontents
+### YCast
+YCast is a self hosted replacement for the vTuner internet radio service which many AVRs use and made by **Micha LaQua** (Copyright (C) 2019 Micha LaQua).
+It emulates a vTuner backend to provide your AVR with the necessary information to play self defined categorized internet radio stations and listen to Radio stations listed in the [Community Radio Browser index](http://www.radio-browser.info). 
+Get YCast via [PyPI](https://pypi.org/project/ycast/) or download from [GitHub](https://github.com/milaq/YCast/releases).
+
+
+Some comments from ycast:
+
+ * vTuner compatible AVRs don't do HTTPS. As such, YCast blindly rewrites every HTTPS station URL to HTTP. Most station providers which utilize HTTPS for their stations also provide an HTTP stream. Thus, most HTTPS stations should work.
+ * The built-in bookmark function does not work at the moment. You need to manually add your favourite stations for now.
+
+### Docker
+This Docker container is based in Alpine:latest and adds Python3 to it, which bases on this Python packages:
+ * `requests`
+ * `flask`
+ * `PyYAML`
+ * `Pillow`
+
+The following dockerfile (and bootstrap.sh) is inspired by the great work of **netraams**. Check out [netraams/ycast-docker](https://hub.docker.com/r/netraams/ycast-docker).
+
+I tried his docker but realised the shown dockerfile wasn't up to date and I couldn't start his docker on raspbian. So I decided to use his work as basis and did some modifications. Also due to security reasons I wanted to build the docker by myself. If you want to do it yourself then read on.
 
 ## Recomendation: Build the docker on your own.
 
 You need the following files in one folder: 
-  * `run.sh`
+ * `run.sh`
  * `build.sh`
  * `dockerfile`
  * `bootstrap.sh`
  * `samples.yml (optional, if you already have your favorites, see vtuner-build.sh)`
 
  #### run.sh 
- (Pay attention to the port.)
+ Pay attention to the port (-p) and the network (--net and --ip). Regarding the network check build.sh.
  ```
 #!/bin/bash
 #prepare
@@ -100,11 +104,11 @@ sudo docker run -d \
 	--restart unless-stopped \
 mpvd/vtuner-emulator-ycast
 
-sudo chmod -R 744 /home/vtuner/
+sudo chmod -R 777 /home/vtuner
 ```
  
 #### build.sh 
-(Pay attention to the network.)
+Pay attention to the network created (docker network create...). Change or delete this line.
 
 ```
 #!/bin/bash
@@ -130,7 +134,7 @@ sudo docker network create --subnet=172.18.0.0/24 multimedia 2>/dev/null
 
 # run the docker
 echo Running the Docker
-mkdir -p /home/vtuner/
+mkdir -p /home/vtuner
 sh run.sh
 
 # If you have your own list put in in the same

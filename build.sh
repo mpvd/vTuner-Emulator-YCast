@@ -21,7 +21,7 @@ sudo docker network create --subnet=172.18.0.0/24 multimedia 2>/dev/null
 
 # run the docker
 echo Running the Docker
-mkdir -p /home/vtuner/
+mkdir -p /home/vtuner
 sh run.sh
 
 # If you have your own list put in in the same
