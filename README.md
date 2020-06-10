@@ -77,14 +77,14 @@ You need the following files in one folder:
  * `run.sh`
  * `build.sh`
  * `dockerfile`
- * `bootstrap.sh`
+ * `entrypoint.sh`
  * `VERSION`
  * `samples.yml (optional, if you already have your favorites, add them. Have a look at the provided example to better understand how the file should look like. Don't worry if you don't have one, during building process there already will be an example copied in the right place, which you can use.)`
 
  
 ## License and warranty
   * YCast has a [GPLv3]-License and is free. Check [PyPI](https://pypi.org/project/ycast/) or [GitHub](https://github.com/milaq/YCast/releases)
-  * dockerfile and bootstrap.sh based on [netraams/ycast-docker](https://hub.docker.com/r/netraams/ycast-docker)
+  * dockerfile based on [netraams/ycast-docker](https://hub.docker.com/r/netraams/ycast-docker)
   * more info about [Flask](https://flask.palletsprojects.com/en/1.1.x/) and the [License](https://github.com/pallets/flask/blob/master/LICENSE.rst)
   * Also this docker/code is distributed in the hope that it will be useful, but without any warranty. You use it at our own risk. 
   
