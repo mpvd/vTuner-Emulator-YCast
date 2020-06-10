@@ -1,4 +1,6 @@
 #!/bin/bash
+VERSION=$(cat VERSION)
+
 #prepare
 sudo docker stop vtuner-ycast
 sudo docker rm vtuner-ycast
@@ -11,6 +13,6 @@ sudo docker run -d \
 	--net multimedia \
 	--ip 172.18.0.100 \
 	--restart unless-stopped \
-mpvd/vtuner-emulator-ycast
+mpvd/vtuner-emulator-ycast:$VERSION
 
-sudo chmod -R 777 /home/vtuner
+sudo chmod -R 755 /home/vtuner
