@@ -10,17 +10,17 @@ if [ -z "$VERSION" ]; then
 else
 	#cleanup confilicting containers and images
 	echo "cleaning up"
-	sudo docker stop vtuner-ycast
-	sudo docker rm vtuner-ycast
-	#sudo docker rmi mpvd/vtuner-emulator-ycast:$VERSION
+	sudo docker stop vey-$VERSION
+	sudo docker rm vey-$VERSION
+	sudo docker rmi mpvd/vtuner-emulator-ycast:$VERSION
 
 	# build docker
 	echo Building version: $VERSION
 	sudo docker build -f dockerfile -t mpvd/vtuner-emulator-ycast:$VERSION . 
 
 	# tag docker
-	echo Tagging the docker
-	sudo docker tag mpvd/vtuner-emulator-ycast:$VERSION mpvd/vtuner-emulator-ycast:latest
+	#echo Tagging the docker
+	#sudo docker tag mpvd/vtuner-emulator-ycast:$VERSION mpvd/vtuner-emulator-ycast:latest
 
 	# create own network for this container which
 	# you can address in DNS and router later

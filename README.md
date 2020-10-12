@@ -80,7 +80,11 @@ You need the following files in one folder:
  * `entrypoint.sh`
  * `VERSION`
  * `samples.yml (optional, if you already have your favorites, add them. Have a look at the provided example to better understand how the file should look like. Don't worry if you don't have one, during building process there already will be an example copied in the right place, which you can use.)`
-
+ * YCast-Source-Files from Github (see above) in folder, so you have the following structure:
+   * docker-folder/dockerfile
+   * docker-folder/ycast/setup.py
+   * docker-folder/ycast/ycast/server.py
+   * and so on
  
 ## License and warranty
   * YCast has a [GPLv3]-License and is free. Check [PyPI](https://pypi.org/project/ycast/) or [GitHub](https://github.com/milaq/YCast/releases)
@@ -88,13 +92,9 @@ You need the following files in one folder:
   * more info about [Flask](https://flask.palletsprojects.com/en/1.1.x/) and the [License](https://github.com/pallets/flask/blob/master/LICENSE.rst)
   * Also this docker/code is distributed in the hope that it will be useful, but without any warranty. You use it at our own risk. 
   
-## ToBe done in Future
-  * If you open the YCast server in your browser, it shows strange codes. It would be cool, if it would show the stations.yml
-  * Editable stations.yml in browser: Right know you have to edit it from your Raspberry
-  * As far as I understand YCast 1.0.0 is using the old API of Radio Browser. I don't know why, but maybe this will be an issue in Future. 
-  
 Feel free to contact me, if you have any optimization: [Report an Issue](https://github.com/mpvd/vTuner-Emulator-YCast/issues)
 
 ## Release Notes
-  * 1.1: Reduced Image size, healthcheck implemented, optimized folder structure and file names, VERSION file integrated 
+  * 1.2: Included new API for Radio Browser based on comments of ordo01 and yay6 in [Fix for issue milaq#54](https://github.com/yay6/YCast/commit/295dc36af3320358929c418c31c25fff8428430f)
+  * 1.1: Reduced size, healthcheck implemented, optimized folder structure, VERSION file integrated 
   * 1.0: Initial build, YCast 1.0.0

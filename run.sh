@@ -2,14 +2,14 @@
 VERSION=$(cat VERSION)
 
 #prepare
-sudo docker stop vtuner-ycast
-sudo docker rm vtuner-ycast
+sudo docker stop vey-$VERSION
+sudo docker rm vey-$VERSION
 
 # run it
 sudo docker run -d \
-	--name vtuner-ycast \
+	--name vey-$VERSION \
 	-v /home/vtuner/:/srv/ycast/ycast/stations/ \
-	-p 8080:80 \
+	-p 8081:80 \
 	--net multimedia \
 	--ip 172.18.0.100 \
 	--restart unless-stopped \
