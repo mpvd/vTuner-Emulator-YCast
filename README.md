@@ -61,13 +61,13 @@ Some comments from ycast:
  * The built-in bookmark function does not work at the moment. You need to manually add your favourite stations for now.
 
 ### Docker
-This Docker container is based in Alpine:latest and adds Python3 to it, which bases on this Python packages:
+This Docker container is based on Alpine:latest and adds Python3 to it, which bases on this Python packages:
  * `requests`
  * `flask`
  * `PyYAML`
  * `Pillow`
 
-The following dockerfile is inspired by the great work of **netraams**. Check out [netraams/ycast-docker](https://hub.docker.com/r/netraams/ycast-docker).
+The dockerfile is inspired by [netraams/ycast-docker](https://hub.docker.com/r/netraams/ycast-docker).
 
 I tried his docker but realised the shown dockerfile wasn't up to date and I couldn't start his docker on raspbian. So I decided to use his work as basis and did some modifications. Also due to security reasons I wanted to build the docker by myself.
 
@@ -88,13 +88,12 @@ You need the following files in one folder:
  
 ## License and warranty
   * YCast has a [GPLv3]-License and is free. Check [PyPI](https://pypi.org/project/ycast/) or [GitHub](https://github.com/milaq/YCast/releases)
-  * dockerfile based on [netraams/ycast-docker](https://hub.docker.com/r/netraams/ycast-docker)
   * more info about [Flask](https://flask.palletsprojects.com/en/1.1.x/) and the [License](https://github.com/pallets/flask/blob/master/LICENSE.rst)
   * Also this docker/code is distributed in the hope that it will be useful, but without any warranty. You use it at our own risk. 
   
 Feel free to contact me, if you have any optimization: [Report an Issue](https://github.com/mpvd/vTuner-Emulator-YCast/issues)
 
 ## Release Notes
-  * 1.2: Included new API for Radio Browser based on comments of ordo01 and yay6 in [Fix for issue milaq#54](https://github.com/yay6/YCast/commit/295dc36af3320358929c418c31c25fff8428430f)
+  * 1.2: Included new API for Radio Browser based on YCast 1.1.0 and small optimizations
   * 1.1: Reduced size, healthcheck implemented, optimized folder structure, VERSION file integrated 
   * 1.0: Initial build, YCast 1.0.0
